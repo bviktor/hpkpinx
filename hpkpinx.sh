@@ -16,10 +16,11 @@ generate_pin ()
     set -e
     if [ ${USE_RSA} -eq 1 ]
     then
-        PIN=$(openssl rsa -in ${1} -pubout 2>/dev/null | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)
+        ALGO='rsa'
     else
-        PIN=$(openssl ec -in ${1} -pubout 2>/dev/null | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)
+        ALGO='ec'
     fi
+    PIN=$(openssl ${ALGO} -in ${1} -pubout 2>/dev/null | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)
     if [ ${PIN} == '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' ]
     then
         echo -n 'MISSING KEY!'
