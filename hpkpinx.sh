@@ -21,7 +21,7 @@ generate_pin ()
         ALGO='ec'
     fi
     PIN=$(openssl ${ALGO} -in ${1} -pubout 2>/dev/null | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)
-    if [ ${PIN} == '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' ]
+    if [ ${PIN} = '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' ]
     then
         echo -n 'MISSING KEY!'
     else
@@ -38,11 +38,11 @@ then
     exit 1
 fi
 
-if [ ${1} == "generate_pin" ]
+if [ ${1} = "generate_pin" ]
 then
     generate_pin ${2}
     echo ""
-elif [ ${1} == "deploy_cert" ]
+elif [ ${1} = "deploy_cert" ]
 then
     if [ -e ${NGINX_ROOT}/hpkp.conf ]
     then
