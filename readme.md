@@ -55,6 +55,11 @@ include hpkp.conf;
 
 The config file is located at `/opt/hpkpinx/config.sh`. You have the following options:
 
+### CERT_ROOT
+
+The path to the folder where dehydrated is putting the Certs (eg. $CERTDIR from the dehydrated config).
+This is Optional, defaults to certs in the nginx folder.
+
 ### HPKP_AGE
 
 The time, in seconds, that the browser should remember that this site is only to be accessed using one of the defined keys.

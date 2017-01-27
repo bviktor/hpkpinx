@@ -4,6 +4,7 @@ set -e
 
 NGINX_ROOT='/etc/nginx'
 HPKPINX_ROOT='/opt/hpkpinx'
+CERT_ROOT="${NGINX_ROOT}/certs"
 
 . ${HPKPINX_ROOT}/config.sh
 
@@ -58,7 +59,7 @@ then
         echo -n "add_header Public-Key-Pins-Report-Only '" > ${NGINX_ROOT}/hpkp.conf
     fi
     echo -n "pin-sha256=\"${STATIC_PIN}\"; " >> ${NGINX_ROOT}/hpkp.conf
-    generate_pin "${NGINX_ROOT}/certs/${2}/privkey.pem" >> ${NGINX_ROOT}/hpkp.conf
-    generate_pin "${NGINX_ROOT}/certs/${2}/privkey.roll.pem" >> ${NGINX_ROOT}/hpkp.conf
+    generate_pin "${CERT_ROOT}/${2}/privkey.pem" >> ${NGINX_ROOT}/hpkp.conf
+    generate_pin "${CERT_ROOT}/${2}/privkey.roll.pem" >> ${NGINX_ROOT}/hpkp.conf
     echo "max-age=${HPKP_AGE}';" >> ${NGINX_ROOT}/hpkp.conf
 fi
