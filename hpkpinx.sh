@@ -4,6 +4,8 @@ set -e
 
 NGINX_ROOT='/etc/nginx'
 HPKPINX_ROOT='/opt/hpkpinx'
+MULTIPLE_HPKP_CONF=0
+STATIC_PIN_FILE=""
 
 . ${HPKPINX_ROOT}/config.sh
 
@@ -44,21 +46,33 @@ then
     echo ""
 elif [ ${1} = "deploy_cert" ]
 then
-    if [ -e ${NGINX_ROOT}/hpkp.conf ]
+    CERT_NAME=${2} # The second argument is the name of the cert
+    if [ ${MULTIPLE_HPKP_CONF} -eq 1 ] # if we want multiple conf files we have to prefix the config file with the name
+    then
+        HPKP_CONF=${NGINX_ROOT}/${CERT_NAME}-hpkp.conf
+    else
+        HPKP_CONF=${NGINX_ROOT}/hpkp.conf
+    fi
+    if [ ${STATIC_PIN_FILE} != "" ] # if an path to an STATIC_PIN_FILE is set use it
+    then
+        # get the pin
+        STATIC_PIN=$(cat "${STATIC_PIN_FILE}" | grep "${CERT_NAME}" | cut -d ' ' -f 2)
+    fi
+    if [ -e ${HPKP_CONF} ]
     then
         echo 'Backing up current hpkp.conf'
-        \cp -f ${NGINX_ROOT}/hpkp.conf ${HPKPINX_ROOT}/hpkp.conf.bak
+        \cp -f ${HPKP_CONF} ${HPKP_CONF}.bak
     fi
     echo 'Regenerating public key pins using new private keys'
-    echo '# THIS FILE IS GENERATED, ANY MODIFICATION WILL BE DISCARDED' > ${NGINX_ROOT}/hpkp.conf
+    echo '# THIS FILE IS GENERATED, ANY MODIFICATION WILL BE DISCARDED' > ${HPKP_CONF}
     if [ ${DEPLOY_HPKP} -eq 1 ]
     then
-        echo -n "add_header Public-Key-Pins '" >> ${NGINX_ROOT}/hpkp.conf
+        echo -n "add_header Public-Key-Pins '" >> ${HPKP_CONF}
     else
-        echo -n "add_header Public-Key-Pins-Report-Only '" > ${NGINX_ROOT}/hpkp.conf
+        echo -n "add_header Public-Key-Pins-Report-Only '" > ${HPKP_CONF}
     fi
-    echo -n "pin-sha256=\"${STATIC_PIN}\"; " >> ${NGINX_ROOT}/hpkp.conf
-    generate_pin "${NGINX_ROOT}/certs/${2}/privkey.pem" >> ${NGINX_ROOT}/hpkp.conf
-    generate_pin "${NGINX_ROOT}/certs/${2}/privkey.roll.pem" >> ${NGINX_ROOT}/hpkp.conf
-    echo "max-age=${HPKP_AGE}';" >> ${NGINX_ROOT}/hpkp.conf
+    echo -n "pin-sha256=\"${STATIC_PIN}\"; " >> ${HPKP_CONF}
+    generate_pin "${NGINX_ROOT}/certs/${CERT_NAME}/privkey.pem" >> ${HPKP_CONF}
+    generate_pin "${NGINX_ROOT}/certs/${CERT_NAME}/privkey.roll.pem" >> ${HPKP_CONF}
+    echo "max-age=${HPKP_AGE}';" >> ${HPKP_CONF}
 fi
