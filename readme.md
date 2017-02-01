@@ -68,6 +68,23 @@ In this case, you can generate a pin for your private key with:
 hpkpinx.sh generate_pin <your_key.pem>
 ~~~
 
+### MULTIPLE_HPKP_CONF
+
+If this config value is set to `1` it will generate an nginx hkpk config file for for each Certificate. 
+This is normally needed if more than one Key is in use.
+
+### STATIC_PIN_FILE
+
+An File to get the STATIC_PIN value for different Certificate CNs. This is used to have an seperat backup Key for each Certificate
+The format should be the CN of the certificat, an space and then the PIN:
+
+~~~
+example.com 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+test.example.net 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+~~~
+
+If this Option is used, `MULTIBLE_HPKP_CONF` should be enabled too in most cases.
+
 ### DEPLOY_HPKP
 
 * If set to `0` (the default), Nginx will only send the `Public-Key-Pins-Report-Only` header and HPKP is not applied.
