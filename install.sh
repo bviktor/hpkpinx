@@ -13,6 +13,8 @@ HPKP_AGE=10
 STATIC_PIN=fixme
 # changing this can render your site permanently inaccessible, handle with extreme caution!
 DEPLOY_HPKP=0
+# this option allows for the HTTP response header to be sent all the time, rather than just on codes 200, 201, 204, 206, 301, 302, 303, 304, or 307
+HEADER_ALWAYS=0
 EOF
 
 echo 'Setting up hpkp.conf'

@@ -60,5 +60,11 @@ then
     echo -n "pin-sha256=\"${STATIC_PIN}\"; " >> ${NGINX_ROOT}/hpkp.conf
     generate_pin "${NGINX_ROOT}/certs/${2}/privkey.pem" >> ${NGINX_ROOT}/hpkp.conf
     generate_pin "${NGINX_ROOT}/certs/${2}/privkey.roll.pem" >> ${NGINX_ROOT}/hpkp.conf
-    echo "max-age=${HPKP_AGE}';" >> ${NGINX_ROOT}/hpkp.conf
+    echo "max-age=${HPKP_AGE}'" >> ${NGINX_ROOT}/hpkp.conf
+    if [ ${HEADER_ALWAYS} -eq 1 ]
+    then
+    	echo "always;" >> ${NGINX_ROOT}/hpkp.conf
+    else
+    	echo ";" >> ${NGINX_ROOT}/hpkp.conf
+    fi
 fi
